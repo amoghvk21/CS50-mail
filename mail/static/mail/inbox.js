@@ -60,4 +60,23 @@ function load_mailbox(mailbox) {
 
   // Show the mailbox name
   document.querySelector('#emails-view').innerHTML = `<h3>${mailbox.charAt(0).toUpperCase() + mailbox.slice(1)}</h3>`;
+
+  // Get emails contained within that mailbox
+  fetch(`/emails/${mailbox}`)
+  .then(response => response.json())
+  .then(emails => {
+    // Print emails to console
+    console.log(emails);
+
+    // Loop through JSON response and append to the emails view container
+    for (let i = 0; i < emails.length; i++) {
+      if (mailbox === 'inbox' || mailbox === 'archive') {
+        document.querySelector('#emails-view').innerHTML += `<div class='emails'><p class='email-content'><b>"${emails[i].subject}"</b> from ${emails[i].sender} at ${emails[i].timestamp}</p></div>`;
+      } else {
+        document.querySelector('#emails-view').innerHTML += `<div class='emails'><p class='email-content'><b>"${emails[i].subject}"</b> to ${emails[i].recipients} at ${emails[i].timestamp}</p></div>`;
+      }
+    };
+
+  });
+
 }

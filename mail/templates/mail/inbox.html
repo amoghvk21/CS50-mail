@@ -2,6 +2,23 @@
 {% load static %}
 
 {% block body %}
+
+    <style>
+
+        .emails {
+            border: 1px solid black;
+            border-radius: 10px;
+            margin-top: 10px;
+            margin-bottom: 10px;
+        }
+
+        .email-content {
+            margin-bottom: 1px;
+            margin-left: 1px;
+        }
+
+    </style>
+
     <h2>{{ request.user.email }}</h2>
 
     <button class="btn btn-sm btn-outline-primary" id="inbox">Inbox</button>
