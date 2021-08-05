@@ -71,7 +71,11 @@ function load_mailbox(mailbox) {
     // Loop through JSON response and append to the emails view container
     for (let i = 0; i < emails.length; i++) {
       if (mailbox === 'inbox' || mailbox === 'archive') {
-        document.querySelector('#emails-view').innerHTML += `<div class='emails'><p class='email-content'><b>"${emails[i].subject}"</b> from ${emails[i].sender} at ${emails[i].timestamp}</p></div>`;
+        if (emails[i].read === true) { 
+          document.querySelector('#emails-view').innerHTML += `<div class='emails' style='backgroud-color: grey;'><p class='email-content'><b>"${emails[i].subject}"</b> from ${emails[i].sender} at ${emails[i].timestamp}</p></div>`;
+        } else {
+          document.querySelector('#emails-view').innerHTML += `<div class='emails' style='backgroud-color: white;'><p class='email-content'><b>"${emails[i].subject}"</b> from ${emails[i].sender} at ${emails[i].timestamp}</p></div>`;
+        }
       } else {
         document.querySelector('#emails-view').innerHTML += `<div class='emails'><p class='email-content'><b>"${emails[i].subject}"</b> to ${emails[i].recipients} at ${emails[i].timestamp}</p></div>`;
       }
