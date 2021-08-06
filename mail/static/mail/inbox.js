@@ -17,6 +17,7 @@ function compose_email() {
   // Show compose view and hide other views
   document.querySelector('#emails-view').style.display = 'none';
   document.querySelector('#compose-view').style.display = 'block';
+  document.querySelector('#email').style.display = 'none';
 
   // Clear out composition fields
   document.querySelector('#compose-recipients').value = '';
@@ -57,6 +58,7 @@ function load_mailbox(mailbox) {
   // Show the mailbox and hide other views
   document.querySelector('#emails-view').style.display = 'block';
   document.querySelector('#compose-view').style.display = 'none';
+  document.querySelector('#email').style.display = 'none';
 
   // Show the mailbox name
   document.querySelector('#emails-view').innerHTML = `<h3>${mailbox.charAt(0).toUpperCase() + mailbox.slice(1)}</h3>`;
@@ -72,15 +74,47 @@ function load_mailbox(mailbox) {
     for (let i = 0; i < emails.length; i++) {
       if (mailbox === 'inbox' || mailbox === 'archive') {
         if (emails[i].read === true) { 
-          document.querySelector('#emails-view').innerHTML += `<div class='emails' style='backgroud-color: grey;'><p class='email-content'><b>"${emails[i].subject}"</b> from ${emails[i].sender} at ${emails[i].timestamp}</p></div>`;
+          document.querySelector('#emails-view').innerHTML += `<div data-emailid='${emails[i].id}' class='emails' onclick='view_email(${emails[i].id})' style='background-color: lightgrey;'><p class='email-content'><b>"${emails[i].subject}"</b> from ${emails[i].sender} at ${emails[i].timestamp}</p></div>`;
         } else {
-          document.querySelector('#emails-view').innerHTML += `<div class='emails' style='backgroud-color: white;'><p class='email-content'><b>"${emails[i].subject}"</b> from ${emails[i].sender} at ${emails[i].timestamp}</p></div>`;
+          document.querySelector('#emails-view').innerHTML += `<div data-emailid='${emails[i].id}' class='emails' onclick='view_email(${emails[i].id})' style='background-color: white;'><p class='email-content'><b>"${emails[i].subject}"</b> from ${emails[i].sender} at ${emails[i].timestamp}</p></div>`;
         }
       } else {
-        document.querySelector('#emails-view').innerHTML += `<div class='emails'><p class='email-content'><b>"${emails[i].subject}"</b> to ${emails[i].recipients} at ${emails[i].timestamp}</p></div>`;
+        document.querySelector('#emails-view').innerHTML += `<div class='emails'><p class='email-content' onclick='view_email(${emails[i].id})'><b>"${emails[i].subject}"</b> to ${emails[i].recipients} at ${emails[i].timestamp}</p></div>`;
       }
     };
 
   });
 
 }
+
+function view_email(emailid) {
+
+  // Clear the container
+  document.querySelector('#emails-view').style.display = 'none';
+  document.querySelector('#compose-view').style.display = 'none';
+  document.querySelector('#email').style.display = 'block';
+
+  // Fetch the email
+  fetch(`emails/${emailid}`)
+  .then(response => response.json())
+  .then(email => {
+
+
+    // Get data from JSON format and manipulate DOM to display the data
+    document.querySelector('#subject').innerHTML = `<b>Subject:</b> ${email.subject}<br>`;
+    document.querySelector('#sender').innerHTML = `<b>From:</b> ${email.sender}<br>`;
+    document.querySelector('#recipient').innerHTML = `<b>To:</b> ${email.recipients}<br>`;
+    document.querySelector('#timestamp').innerHTML = `<b>At:</b> ${email.timestamp}<br>`;
+    document.querySelector('#body').value = email.body;
+
+    // Mark email as read
+    fetch(`/emails/${email.id}`, {
+      method: 'PUT',
+      body: JSON.stringify({
+          read: true
+      })
+    })
+
+  });
+
+};

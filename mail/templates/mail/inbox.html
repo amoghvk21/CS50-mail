@@ -17,6 +17,14 @@
             margin-left: 1px;
         }
 
+        #email {
+            display: none;
+        }
+
+        textarea {
+            width: 1100px;
+        }
+
     </style>
 
     <h2>{{ request.user.email }}</h2>
@@ -47,6 +55,18 @@
             <input type="submit" class="btn btn-primary"/>
         </form>
     </div>
+
+    <div id="email">
+        <table>
+            <h3 id="subject">Subject: </h3>
+            <p id="sender"><b>From: </b></p>
+            <p id="recipient"><b>To: </b></p>
+            <p id="timestamp"><b>At: </b></p>
+            <textarea disabled id='body'></textarea>
+            <button>Archive</button>
+        </table>
+    </div>
+
 {% endblock %}
 
 {% block script %}
