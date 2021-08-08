@@ -87,6 +87,7 @@ function load_mailbox(mailbox) {
 
 }
 
+
 function view_email(emailid) {
 
   // Clear the container
@@ -99,13 +100,29 @@ function view_email(emailid) {
   .then(response => response.json())
   .then(email => {
 
-
     // Get data from JSON format and manipulate DOM to display the data
     document.querySelector('#subject').innerHTML = `<b>Subject:</b> ${email.subject}<br>`;
     document.querySelector('#sender').innerHTML = `<b>From:</b> ${email.sender}<br>`;
     document.querySelector('#recipient').innerHTML = `<b>To:</b> ${email.recipients}<br>`;
     document.querySelector('#timestamp').innerHTML = `<b>At:</b> ${email.timestamp}<br>`;
     document.querySelector('#body').value = email.body;
+
+    // Add archive or unarchive button if necessary
+    if (email.sender !== document.querySelector('#user').innerHTML) {
+      if (email.archived === false) {
+        document.querySelector('#archive-button').dataset.emailid = email.id;
+        document.querySelector('#unarchive-button').style.display = 'none';
+        document.querySelector('#archive-button').style.display = 'block';
+        //document.querySelector('#archive-button').addEventListener('onclick', archive_email(email.id));
+        //document.querySelector('#archive-button').click = archive_email(email.id);
+      } else {
+        document.querySelector('#unarchive-button').dataset.emailid = email.id;
+        document.querySelector('#archive-button').style.display = 'none';
+        document.querySelector('#unarchive-button').style.display = 'block';
+        //document.querySelector('#unarchive-button').addEventListener('onclick', unarchive_email(email.id));
+        //document.querySelector('#unarchive-button').click = unarchive_email(email.id);
+      };
+    };
 
     // Mark email as read
     fetch(`/emails/${email.id}`, {
@@ -118,3 +135,29 @@ function view_email(emailid) {
   });
 
 };
+
+
+function archive_email(event) {
+  const emailid = event.target.dataset.emailid;
+  fetch(`/emails/${emailid}`, {
+    method: 'PUT',
+    body: JSON.stringify({
+        archived: true
+    })
+  })
+
+  load_mailbox('inbox');
+}
+
+
+function unarchive_email(event) {
+  const emailid = event.target.dataset.emailid;
+  fetch(`/emails/${emailid}`, {
+    method: 'PUT',
+    body: JSON.stringify({
+        archived: false
+    })
+  })
+
+  load_mailbox('inbox');
+}

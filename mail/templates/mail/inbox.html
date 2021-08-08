@@ -27,7 +27,7 @@
 
     </style>
 
-    <h2>{{ request.user.email }}</h2>
+    <h2 id="user">{{ request.user.email }}</h2>
 
     <button class="btn btn-sm btn-outline-primary" id="inbox">Inbox</button>
     <button class="btn btn-sm btn-outline-primary" id="compose">Compose</button>
@@ -63,7 +63,8 @@
             <p id="recipient"><b>To: </b></p>
             <p id="timestamp"><b>At: </b></p>
             <textarea disabled id='body'></textarea>
-            <button>Archive</button>
+            <button id='archive-button' data-emailid="" onclick="archive_email(event)">Archive</button>
+            <button id='unarchive-button' data-emailid="" onclick="unarchive_email(event)">Unarchive</button>
         </table>
     </div>
 
